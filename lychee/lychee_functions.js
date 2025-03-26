@@ -239,7 +239,7 @@ post.damage_item = function(count, contextual){
     let data = {
         type: "damage_item"
     }
-    if(count != undefined && count != false ) data.count = count
+    if(count != undefined && count != false ) data.damage = damage
     if(contextual != undefined && contextual != false ) data.contextual = contextual
     return data
 }
