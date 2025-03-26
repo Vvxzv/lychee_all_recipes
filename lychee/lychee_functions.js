@@ -48,7 +48,7 @@ contextual.chance = (chance) => ({
 
 /**
  * 
- * @param {string} contextual condition
+ * @param {function} contextual condition
  * @returns 
  */
 contextual.not = (contextual) => ({
@@ -58,7 +58,7 @@ contextual.not = (contextual) => ({
 
 /**
  * 
- * @param {string} contextual condition 
+ * @param {function} contextual condition 
  * @returns 
  */
 contextual.or = (contextual) => ({
@@ -67,7 +67,7 @@ contextual.or = (contextual) => ({
 })
 
 /**
- * @param {[method]} contextual condition
+ * @param {[function]} contextual condition
  * @returns
  */
 contextual.and = (contextual) => ({
@@ -151,7 +151,7 @@ contextual.fall_distance = (fall_distance_range) => ({
 /**
  * 
  * @param {DoubleBounds} entity_health_range number | [number(min), number(max)]
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 contextual.entity_health = (entity_health_range) => ({
@@ -187,7 +187,7 @@ contextual.check_param = (key) => ({
  * 
  * @param {string} item 
  * @param {int} count default 1
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @param {string} nbt optional
  * @returns 
  */
@@ -212,7 +212,7 @@ post.dropItem = function(item, count, contextual, nbt){
  * 
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
  * @param {[int,int,int]} offset [offsetX, offsetY, offsetZ] optional
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.placeBlock = function(block, offset, contextual){
@@ -233,7 +233,7 @@ post.placeBlock = function(block, offset, contextual){
  * 
  * @param {int} count 
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#damage-item
- * @param {string} contextual optional
+ * @param {function} contextual optional
  */
 post.damage_item = function(count, contextual){
     let data = {
@@ -249,7 +249,7 @@ post.damage_item = function(count, contextual){
  * @param {string} command 
  * @param {boolean} hide default false
  * @param {boolean} repeat default true
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.execute = function(command, hide, repeat, contextual){
@@ -266,7 +266,7 @@ post.execute = function(command, hide, repeat, contextual){
 /**
  * 
  * @param {int} xp 
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.drop_xp = function(xp, contextual){
@@ -282,7 +282,7 @@ post.drop_xp = function(xp, contextual){
  * 
  * @param {IntBounds} rolls [0,2] => [min, max]
  * @param {[]} entries Weighted postAction[]
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.random = function(rolls, entries, contextual){
@@ -318,7 +318,7 @@ post.if = function(then, other){
  * @param {number} radius default 4
  * @param {number} radius_step default 0.5
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#create-explosion
- * @param {string} contextual optional
+ * @param {function} contextual optional
  */
 post.explode = function(offset, fire, block_interaction, radius, radius_step, contextual){
     let data = {
@@ -340,7 +340,7 @@ post.explode = function(offset, fire, block_interaction, radius, radius_step, co
 /**
  * 
  * @param {number} chance 0.0-1.0
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.anvil_damage_chance = function(chance, contextual){
@@ -356,7 +356,7 @@ post.anvil_damage_chance = function(chance, contextual){
  * 
  * @param {DoubleBounds} damage 
  * @param {string} source default "generic" 
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#hurt-entity
  */
 post.hurtEntity = function(damage, source, contextual){
@@ -372,7 +372,7 @@ post.hurtEntity = function(damage, source, contextual){
 /**
  * 
  * @param {number} chance 
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.anvil_damage_chance = function(chance, contextual){
@@ -387,7 +387,7 @@ post.anvil_damage_chance = function(chance, contextual){
 /**
  * 
  * @param {number} seconds 
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.add_item_cooldown = function(seconds, contextual){
@@ -402,7 +402,7 @@ post.add_item_cooldown = function(seconds, contextual){
 /**
  * 
  * @param {number} factor default 1
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
     
@@ -418,7 +418,7 @@ post.move_towards_face = function(factor, contextual){
 /**
  * 
  * @param {number} seconds 
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns 
  */
 post.delay = function(seconds, contextual){
@@ -439,7 +439,7 @@ post.break = () => ({
  * @param {BlockPredicate} block 
  * @param {string} property 
  * @param {[int,int,int]} offset [offsetX, offsetY, offsetZ] optional
- * @param {string} contextual optional
+ * @param {function} contextual optional
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#cycle-state-property
  */
 post.cycle_state_property = function(block, property, offset, contextual){
