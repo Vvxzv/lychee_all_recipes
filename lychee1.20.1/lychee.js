@@ -162,5 +162,4 @@ ServerEvents.recipes(event => {
             ]
         )
     ).id('lychee:click_block_with_item/dirt')
-
 })
