@@ -14,6 +14,14 @@ function isFirstCharDigit(str) {
     return !isNaN(str.charAt(0)) && str.charAt(0) !== ' ';
 }
 
+function extractQuantity(str) {
+    // 使用正则表达式匹配字符串中的数字
+    const match = str.match(/^(\d+)\s*x/);
+    
+    // 如果匹配到数字，返回数字，否则返回 null
+    return match ? parseInt(match[1], 10) : null;
+}
+
 //更换 item 类型
 /**
  * 
@@ -28,7 +36,12 @@ function item_type(item){
         } 
         else if (typeof item === 'string' && item.startsWith("#")) {
             return { tag: item.slice(1) }
-        } 
+        }
+        else if (typeof item === 'string' && isFirstCharDigit(item)) {
+            let count = extractQuantity(item)
+            item = item.split(' ')[1]
+            return { item: item, count: count }
+        }
         else if (typeof item === 'string') {
             return { item: item }
         }
@@ -48,7 +61,7 @@ contextual.chance = (chance) => ({
 
 /**
  * 
- * @param {function} contextual condition
+ * @param {property} contextual condition
  * @returns 
  */
 contextual.not = (contextual) => ({
@@ -58,7 +71,7 @@ contextual.not = (contextual) => ({
 
 /**
  * 
- * @param {function} contextual condition 
+ * @param {property} contextual condition 
  * @returns 
  */
 contextual.or = (contextual) => ({
@@ -67,7 +80,7 @@ contextual.or = (contextual) => ({
 })
 
 /**
- * @param {[function]} contextual condition
+ * @param {[property]} contextual condition
  * @returns
  */
 contextual.and = (contextual) => ({
@@ -151,7 +164,7 @@ contextual.fall_distance = (fall_distance_range) => ({
 /**
  * 
  * @param {DoubleBounds} entity_health_range number | [number(min), number(max)]
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 contextual.entity_health = (entity_health_range) => ({
@@ -187,7 +200,7 @@ contextual.check_param = (key) => ({
  * 
  * @param {string} item 
  * @param {int} count default 1
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @param {string} nbt optional
  * @returns 
  */
@@ -212,7 +225,7 @@ post.dropItem = function(item, count, contextual, nbt){
  * 
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
  * @param {[int,int,int]} offset [offsetX, offsetY, offsetZ] optional
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.placeBlock = function(block, offset, contextual){
@@ -233,7 +246,7 @@ post.placeBlock = function(block, offset, contextual){
  * 
  * @param {int} count 
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#damage-item
- * @param {function} contextual optional
+ * @param {property} contextual optional
  */
 post.damage_item = function(count, contextual){
     let data = {
@@ -249,7 +262,7 @@ post.damage_item = function(count, contextual){
  * @param {string} command 
  * @param {boolean} hide default false
  * @param {boolean} repeat default true
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.execute = function(command, hide, repeat, contextual){
@@ -266,7 +279,7 @@ post.execute = function(command, hide, repeat, contextual){
 /**
  * 
  * @param {int} xp 
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.drop_xp = function(xp, contextual){
@@ -282,7 +295,7 @@ post.drop_xp = function(xp, contextual){
  * 
  * @param {IntBounds} rolls [0,2] => [min, max]
  * @param {[]} entries Weighted postAction[]
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.random = function(rolls, entries, contextual){
@@ -318,7 +331,7 @@ post.if = function(then, other){
  * @param {number} radius default 4
  * @param {number} radius_step default 0.5
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#create-explosion
- * @param {function} contextual optional
+ * @param {property} contextual optional
  */
 post.explode = function(offset, fire, block_interaction, radius, radius_step, contextual){
     let data = {
@@ -340,7 +353,7 @@ post.explode = function(offset, fire, block_interaction, radius, radius_step, co
 /**
  * 
  * @param {number} chance 0.0-1.0
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.anvil_damage_chance = function(chance, contextual){
@@ -356,7 +369,7 @@ post.anvil_damage_chance = function(chance, contextual){
  * 
  * @param {DoubleBounds} damage 
  * @param {string} source default "generic" 
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#hurt-entity
  */
 post.hurtEntity = function(damage, source, contextual){
@@ -371,23 +384,8 @@ post.hurtEntity = function(damage, source, contextual){
 
 /**
  * 
- * @param {number} chance 
- * @param {function} contextual optional
- * @returns 
- */
-post.anvil_damage_chance = function(chance, contextual){
-    let data = {
-        type:"anvil_damage_chance",
-        chance:chance
-    }
-    if(contextual != undefined && contextual != false ) data.contextual = contextual
-    return data
-}
-
-/**
- * 
  * @param {number} seconds 
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.add_item_cooldown = function(seconds, contextual){
@@ -402,7 +400,7 @@ post.add_item_cooldown = function(seconds, contextual){
 /**
  * 
  * @param {number} factor default 1
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
     
@@ -418,7 +416,7 @@ post.move_towards_face = function(factor, contextual){
 /**
  * 
  * @param {number} seconds 
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns 
  */
 post.delay = function(seconds, contextual){
@@ -439,7 +437,7 @@ post.break = () => ({
  * @param {BlockPredicate} block 
  * @param {string} property 
  * @param {[int,int,int]} offset [offsetX, offsetY, offsetZ] optional
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#cycle-state-property
  */
 post.cycle_state_property = function(block, property, offset, contextual){
@@ -465,7 +463,7 @@ post.prevent_default = () => ({
  * 
  * @param {string} item 
  * @param {int} count default 1
- * @param {function} contextual optional
+ * @param {property} contextual optional
  * @param {string} nbt optional
  * @returns https://lycheetweaker.readthedocs.io/en/docs-1.20/post-action/#set-item
  */
@@ -485,8 +483,8 @@ post.setItem = function(item, count, contextual, nbt){
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {[function]} postActions [post.drop_item(item, count, chance),...]
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...]
+ * @param {property} contextual condition (optional)
  */
 lychee.use_item_on_block = function(item, block, postActions, contextual){
     let itemin = item_type(item)
@@ -504,8 +502,8 @@ lychee.use_item_on_block = function(item, block, postActions, contextual){
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {[function]} postActions [post.drop_item(item, count, chance),...]
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...]
+ * @param {property} contextual condition (optional)
  */
 lychee.click_block_with_item = function(item, block, postActions, contextual){
     let itemin = item_type(item)
@@ -522,8 +520,8 @@ lychee.click_block_with_item = function(item, block, postActions, contextual){
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...]
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...]
+ * @param {property} contextual condition (optional)
  */
 lychee.item_burning = function(item, postActions, contextual){
     let itemin = item_type(item)
@@ -540,8 +538,8 @@ lychee.item_burning = function(item, postActions, contextual){
  *
  * @param {[string]} item    custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {[function]} postActions [post.drop_item(item, count, chance),...]
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...]
+ * @param {property} contextual condition (optional)
  */
 lychee.item_inside = function(item, block, postActions, contextual){
     let itemin = item_type(item)
@@ -561,13 +559,13 @@ lychee.item_inside = function(item, block, postActions, contextual){
  * @param {string} material 'minecraft:apple' or '3x minecraft:apple'
  * @param {string} result 
  * @param {int} level_cost 
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.anvil_crafting = function(item, material, result, level_cost, postActions, contextual){
     let material_cost = 1
     if(isFirstCharDigit(material)){
-        material_cost = +material[0]
+        material_cost = extractQuantity(material)
         material = material.split(' ')[1]
     }
     let itemin = [item, material]
@@ -586,8 +584,8 @@ lychee.anvil_crafting = function(item, material, result, level_cost, postActions
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...]
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...]
+ * @param {property} contextual condition (optional)
  */
 lychee.anvil_crushing = function(item, postActions, contextual){
     let itemin = item_type(item)
@@ -603,10 +601,10 @@ lychee.anvil_crushing = function(item, postActions, contextual){
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
  * @param {BlockPredicate} falling_block 
  * https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {function} contextual condition (optional)
+ * @param {property} contextual condition (optional)
  */
 lychee.falling_block_crushing = function(item, postActions, falling_block, contextual){
     let itemin = item_type(item)
@@ -623,10 +621,10 @@ lychee.falling_block_crushing = function(item, postActions, falling_block, conte
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
  * @param {BlockPredicate} landing_block 
  * https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {function} contextual condition (optional)
+ * @param {property} contextual condition (optional)
  */
 lychee.anvil_crushing_on_landing_block = function(item, postActions, landing_block, contextual){
     let itemin = item_type(item)
@@ -643,12 +641,12 @@ lychee.anvil_crushing_on_landing_block = function(item, postActions, landing_blo
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
  * @param {BlockPredicate} landing_block 
  * https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
  * @param {BlockPredicate} falling_block 
  * https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {function} contextual condition (optional)
+ * @param {property} contextual condition (optional)
  */
 lychee.falling_block_crushing_on_landing_block = function(item, postActions, falling_block, landing_block, contextual){
     let itemin = item_type(item)
@@ -667,8 +665,8 @@ lychee.falling_block_crushing_on_landing_block = function(item, postActions, fal
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.lightning_channeling_item = function(item, postActions, contextual){
     let itemin = item_type(item)
@@ -683,8 +681,8 @@ lychee.lightning_channeling_item = function(item, postActions, contextual){
 
 /**
  * 
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.lightning_channeling = function(postActions, contextual){
     let eventData = {
@@ -698,8 +696,8 @@ lychee.lightning_channeling = function(postActions, contextual){
 /**
  * 
  * @param {[string]} item   custom item ingredient: https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.item_exploding = function(item, postActions, contextual){
     let itemin = item_type(item)
@@ -715,8 +713,8 @@ lychee.item_exploding = function(item, postActions, contextual){
 /**
  * 
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.block_exploding = function(block, postActions, contextual){
     let eventData = {
@@ -732,8 +730,8 @@ lychee.block_exploding = function(block, postActions, contextual){
  * 
  * @param {BlockPredicate} fluid https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.dripstone_dripping = function(fluid, block, postActions, contextual){
     let eventData = {
@@ -749,8 +747,8 @@ lychee.dripstone_dripping = function(fluid, block, postActions, contextual){
 /**
  * 
  * @param {BlockPredicate} block https://lycheetweaker.readthedocs.io/en/docs-1.20/general-types/#blockpredicate
- * @param {[function]} postActions [post.drop_item(item, count, chance),...] 
- * @param {function} contextual condition (optional)
+ * @param {[property]} postActions [post.drop_item(item, count, chance),...] 
+ * @param {property} contextual condition (optional)
  */
 lychee.random_block_ticking = function(block, postActions, contextual){
     let eventData = {
