@@ -14,14 +14,6 @@ function isFirstCharDigit(str) {
     return !isNaN(str.charAt(0)) && str.charAt(0) !== ' ';
 }
 
-function extractQuantity(str) {
-    // 使用正则表达式匹配字符串中的数字
-    const match = str.match(/^(\d+)\s*x/);
-    
-    // 如果匹配到数字，返回数字，否则返回 null
-    return match ? parseInt(match[1], 10) : null;
-}
-
 //更换 item 类型
 /**
  * 
@@ -38,8 +30,8 @@ function item_type(item){
             return { tag: item.slice(1) }
         }
         else if (typeof item === 'string' && isFirstCharDigit(item)) {
-            let count = extractQuantity(item)
-            item = item.split(' ')[1]
+            let count = +item.split('x ')[0]
+            item = item.split('x ')[1]
             return { item: item, count: count }
         }
         else if (typeof item === 'string') {
@@ -565,8 +557,8 @@ lychee.item_inside = function(item, block, postActions, contextual){
 lychee.anvil_crafting = function(item, material, result, level_cost, postActions, contextual){
     let material_cost = 1
     if(isFirstCharDigit(material)){
-        material_cost = extractQuantity(material)
-        material = material.split(' ')[1]
+        material_cost = +material.split('x ')[0]
+        material = material.split('x ')[1]
     }
     let itemin = [item, material]
     let eventData = {
@@ -574,7 +566,7 @@ lychee.anvil_crafting = function(item, material, result, level_cost, postActions
         item_in: item_type(itemin),
         item_out: { item: result },
         level_cost: level_cost,
-        material_cost: material_cost,
+        material_cost: +material_cost,
         post: Array.isArray(postActions) ? postActions : [postActions]
     }
     if(contextual != undefined && contextual != false ) eventData.contextual = contextual
