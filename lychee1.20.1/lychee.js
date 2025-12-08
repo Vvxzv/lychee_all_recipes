@@ -13,7 +13,7 @@ ServerEvents.recipes(event => {
             [
                 //post.placeBlock('air', [0,0,0]),    //[]里是x,y,z偏移量，可以不写
                 post.placeBlock('air'),
-                post.dropItem('minecraft:ancient_debris', 1)
+                post.dropItem('minecraft:ancient_debris')
             ]
         )
     ).id('lychee:use_item_on_block/ancient_debris')
@@ -24,22 +24,13 @@ ServerEvents.recipes(event => {
             'minecraft:stone',
             [
                 post.placeBlock('air'),
-                post.dropItem('minecraft:stone_sword', 1,
+                post.dropItem(
+                    Item.of('minecraft:stone_sword').enchant('sharpness', 1),
                     contextual.and([
                         contextual.is_sneaking(),
                         contextual.chance(0.5)
-                    ]),
-                    "{Enchantments:[{lvl:1s, id:\"minecraft:shapeness\"}]}"
+                    ])
                 )
-                /*
-                {
-                    type:'drop_item',
-                    item:'minecraft:stone_sword',
-                    count:1,
-                    nbt:"{Enchantments:[{lvl:1s, id:\"minecraft:shapeness\"}]}",
-                    contextual:contextual.is_sneaking()
-                }
-                    */
             ]
         )
     ).id('lychee:use_item_on_block/stone_sword')
@@ -55,7 +46,7 @@ ServerEvents.recipes(event => {
         )
     ).id('lychee:anvil_crafting/enchanted_golden_apple')
 
-    //例
+    //例3
     event.custom(
         lychee.anvil_crushing_on_landing_block(
             [
@@ -63,22 +54,18 @@ ServerEvents.recipes(event => {
                 'minecraft:iron_ingot'
             ],
             [
-                post.dropItem('minecraft:iron_ore',1,false,'{item:1b}')     //如果不填条件contextual，通过填false跳过这一项
+                post.dropItem('minecraft:iron_ore')
             ],
-            'sand'
+            'minecraft:sand'
         )
     ).id('lychee:anvil_crushing_on_landing_block/iron_ore')
 
+    //例4
     event.custom(
         lychee.anvil_crushing(
+            Item.of('minecraft:coal', '{coal:1b}'),
             [
-                {
-                    item:'coal',
-                    nbt:'{coal:1b}'
-                }
-            ],
-            [
-                post.dropItem('minecraft:diamond',1, contextual.chance(0.5))
+                post.dropItem('minecraft:diamond', contextual.chance(0.5))
             ],
             contextual.location(
                 {
@@ -91,7 +78,7 @@ ServerEvents.recipes(event => {
         )
     ).id('lychee:anvil_crushing_on_landing_block/diamond_0')
 
-    //例
+    //例5
     event.custom(
         lychee.item_inside(
             'minecraft:bucket',
@@ -103,12 +90,12 @@ ServerEvents.recipes(event => {
             },
             [
                 post.placeBlock('cauldron'),
-                post.dropItem('water_bucket',1,contextual.chance(1))    //概率100%，不写contextual.chance(1)和写了效果一样
+                post.dropItem('water_bucket', contextual.chance(1))    //概率100%
             ]
         )
     ).id('lychee:item_inside/water_bucket')
 
-    //例
+    //例6
     event.custom(
         lychee.dripstone_dripping(
             'lava',
@@ -117,46 +104,47 @@ ServerEvents.recipes(event => {
         )
     ).id('lychee/dripstone_dripping/magma_block')
 
-    //例
+    //例7
     event.custom(
         lychee.lightning_channeling_item(
             'minecraft:glass_bottle',
-            post.random(1,[
+            post.random(1, [
                 //在post.random里使用的是 weighted PostAction
-                //在这里的post.dropItem().weight()可以设置权重 (  只支持了post.dropItem()使用.weight()  )
-                post.dropItem('minecraft:stone').weight(20),
-                post.dropItem('minecraft:glass_bottle').weight(10)
+                post.dropItem('minecraft:stone', false, 20),
+                post.dropItem('minecraft:glass_bottle', false, 10)
             ])
         )
     ).id('lychee:lightning_channeling_item/experience_bottle')
 
-    //例
+    //例8
     event.custom(
         lychee.item_burning(
             '#logs',
-            post.dropItem('coal', 1)
+            post.dropItem('coal')
         )
     ).id('lychee:item_burning/coal')
 
-    //例 手持指定物品左键事件
+    //例9 手持指定物品左键事件
     event.custom(
         lychee.click_block_with_item(
-            //物品的object，如果是需要自定义的nbt，那就要这样写
             {
                 //要有这个type才能写nbt,    'forge:partial_nbt'匹配部分nbt  'forge:nbt'匹配全部nbt
+                //或者也可以
+                // Item.of('stone_sword').enchant('sharpness', 1).weakNBT()
+                // 但是要注意这样写nbt会多了{Damage:0} 因此剑掉耐久了就不满足nbt了
                 //更多详细类型 https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types
                 type:'forge:partial_nbt',
                 //物品id
                 item:'minecraft:stone_sword',
                 //物品nbt，使用/data get entity @s SelectedItem指令查看手持物品的资料里面的tag就是nbt
-                nbt:"{Enchantments:[{lvl:1s, id:\"minecraft:shapeness\"}]}"
+                nbt:"{Enchantments:[{lvl:1s, id:\"minecraft:sharpness\"}]}"
             },
             'grass_block',
             [
                 post.placeBlock('air'),
-                post.random(1,[
-                    post.dropItem('dirt').weight(20),
-                    post.dropItem('cobblestone').weight(10)
+                post.random(1, [
+                    post.dropItem('dirt', false, 20),
+                    post.dropItem('cobblestone', false, 10)
                 ]),
                 post.damage_item(1)
             ]
