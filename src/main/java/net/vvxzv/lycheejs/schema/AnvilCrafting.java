@@ -13,6 +13,6 @@ public interface AnvilCrafting extends BaseRecipeSchema {
     RecipeKey<OutputItem> ITEM_OUT = ItemComponents.OUTPUT.key("item_out");
     RecipeKey<Integer> MATERIAL_COST = NumberComponent.INT.key("material_cost").optional(1);
     RecipeKey<Integer> LEVEL_COST = NumberComponent.INT.key("level_cost").optional(1);
-    RecipeKey<Post[]> ASSEMBLING = LycheeSchema.POST_ARRAY.key("assembling").optional(new Post[]{Post.createNull()});
+    RecipeKey<Post[]> ASSEMBLING = LycheeSchema.POST_ARRAY.key("assembling").optional(new Post[]{});
     RecipeSchema SCHEMA = new RecipeSchema(ITEM_IN, ITEM_OUT, MATERIAL_COST, LEVEL_COST, POST_ACTION, ASSEMBLING, CONTEXTUAL_CONDITION, COMMENT, GHOST, HIDE_IN_VIEWER);
 }

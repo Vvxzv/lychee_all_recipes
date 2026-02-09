@@ -43,10 +43,6 @@ public class Post implements JsonSerializable {
         return new Post();
     }
 
-    public static Post createNull(){
-        return new Post("null");
-    }
-
     public static Post create(JsonObject json){
         return new Post(json);
     }

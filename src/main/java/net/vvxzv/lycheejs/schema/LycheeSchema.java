@@ -102,7 +102,7 @@ public interface LycheeSchema {
             } else if (o instanceof Post post) {
                 return post;
             }
-            return Post.createNull();
+            return Post.create().setType("null");
         }
     };
     RecipeComponent<Post[]> POST_ARRAY = POST.asArray();
@@ -126,7 +126,7 @@ public interface LycheeSchema {
             else if(o instanceof Contextual ctx){
                 return ctx;
             }
-            return Contextual.createNull();
+            return Contextual.create().setType("null");
         }
     };
     RecipeComponent<Contextual[]> CONTEXTUAL_ARRAY = CONTEXTUAL.asArray();

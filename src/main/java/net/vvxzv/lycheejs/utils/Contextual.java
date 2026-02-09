@@ -38,10 +38,6 @@ public class Contextual implements JsonSerializable {
         return new Contextual();
     }
 
-    public static Contextual createNull() {
-        return new Contextual("null");
-    }
-
     public static Contextual create(JsonObject json) {
         return new Contextual(json);
     }

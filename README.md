@@ -1,5 +1,5 @@
 # LycheeJS
-## 这是可以在kubejs方便注册lychee配方的模组
+## KubeJS 的 Lychee 集成
 ### 使用例子
 ```JavaScript
 ServerEvents.recipes(event => {
@@ -101,7 +101,7 @@ ServerEvents.recipes(event => {
 ---
 
 # LycheeJS
-## This is a mod that allows for easy registration of lychee recipes in kubejs
+## KubeJS integration for Lychee.
 ### Example
 ```JavaScript
 ServerEvents.recipes(event => {
