@@ -3,6 +3,7 @@ package net.vvxzv.lycheejs.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+@SuppressWarnings("unused")
 public class DoubleBounds {
     private JsonObject json;
 

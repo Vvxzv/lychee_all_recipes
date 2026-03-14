@@ -5,10 +5,7 @@ import dev.latvian.mods.kubejs.recipe.schema.RegisterRecipeSchemasEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.vvxzv.lycheejs.schema.*;
-import net.vvxzv.lycheejs.utils.BlockPredicate;
-import net.vvxzv.lycheejs.utils.Contextual;
-import net.vvxzv.lycheejs.utils.LocationPredicate;
-import net.vvxzv.lycheejs.utils.Post;
+import net.vvxzv.lycheejs.utils.*;
 
 public class LycheeJSPlugin extends KubeJSPlugin {
     @Override
@@ -33,5 +30,7 @@ public class LycheeJSPlugin extends KubeJSPlugin {
         event.add("Post", Post.class);
         event.add("Contextual", Contextual.class);
         event.add("LocationPredicate", LocationPredicate.class);
+        event.add("IntBounds" , IntBounds.class);
+        event.add("DoubleBounds" , DoubleBounds.class);
     }
 }

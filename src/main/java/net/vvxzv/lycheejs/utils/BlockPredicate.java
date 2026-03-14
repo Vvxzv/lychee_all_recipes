@@ -20,7 +20,7 @@ public class BlockPredicate implements JsonSerializable {
         this.json = new JsonObject();
     }
 
-    private BlockPredicate(JsonObject object){
+    private BlockPredicate(JsonObject object) {
         this();
         if (object == null) {
             throw new RecipeExceptionJS("BlockPredicate JsonObject cannot be null!");
@@ -34,7 +34,7 @@ public class BlockPredicate implements JsonSerializable {
         return new BlockPredicate(json);
     }
 
-    @Info("String... block_id_or_tag")
+    @Info("blockId or #blockTag")
     public static BlockPredicate of(String... values){
         BlockPredicate blockPredicate = new BlockPredicate();
         JsonArray array = new JsonArray();
@@ -49,6 +49,7 @@ public class BlockPredicate implements JsonSerializable {
         return blockPredicate;
     }
 
+    @Info("String nbt")
     public BlockPredicate withNBT(String nbt){
         this.json.addProperty("nbt", nbt);
         return this;
@@ -56,29 +57,38 @@ public class BlockPredicate implements JsonSerializable {
 
     @Info("String key, String value")
     public BlockPredicate withState(String key, String value) {
-        JsonObject stateJsonObject = new JsonObject();
         String integerRegex = "^[-+]?\\d+$";
+        JsonObject stateJsonObject = this.json.has("state")
+                ? this.json.getAsJsonObject("state")
+                : new JsonObject();
 
-        if (value != null && value.matches(integerRegex)) {
+        if (value == null) {
+            this.json.add("state", stateJsonObject);
+            return this;
+        }
+
+        if (value.matches(integerRegex)) {
             try {
                 Integer numValue = Integer.parseInt(value);
                 stateJsonObject.addProperty(key, numValue);
-            } catch (NumberFormatException e) {
-                stateJsonObject.addProperty(key, value);
+            } catch (NumberFormatException ignored) {
             }
         } else {
             stateJsonObject.addProperty(key, value);
         }
+
         this.json.add("state", stateJsonObject);
         return this;
     }
 
     @Info("String key, String minValue, String maxValue")
     public BlockPredicate withState(String key, String min, String max) {
-        JsonObject stateJsonObject = new JsonObject();
         String integerRegex = "^[-+]?\\d+$";
+        JsonObject stateJsonObject = this.json.has("state")
+                ? this.json.getAsJsonObject("state")
+                : new JsonObject();
 
-        if(min != null && max != null && min.matches(integerRegex) && max.matches(integerRegex)){
+        if (min != null && max != null && min.matches(integerRegex) && max.matches(integerRegex)) {
             try {
                 int minValue = Integer.parseInt(min);
                 int maxValue = Integer.parseInt(max);
@@ -87,15 +97,30 @@ public class BlockPredicate implements JsonSerializable {
             } catch (NumberFormatException ignored) {
             }
         }
+
+        this.json.add("state", stateJsonObject);
+        return this;
+    }
+
+    @Info("String key, IntBounds intBounds")
+    public BlockPredicate withState(String key, IntBounds intBounds) {
+        JsonObject stateJsonObject = this.json.has("state")
+                ? this.json.getAsJsonObject("state")
+                : new JsonObject();
+        stateJsonObject.add(key, intBounds.toJson());
         this.json.add("state", stateJsonObject);
         return this;
     }
 
     @Info("String key, boolean value")
-    public BlockPredicate withState(String key, boolean value){
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(key, value);
-        this.json.add("state", jsonObject);
+    public BlockPredicate withState(String key, boolean value) {
+        JsonObject stateJsonObject = this.json.has("state")
+                ? this.json.getAsJsonObject("state")
+                : new JsonObject();
+
+        stateJsonObject.addProperty(key, value);
+
+        this.json.add("state", stateJsonObject);
         return this;
     }
 

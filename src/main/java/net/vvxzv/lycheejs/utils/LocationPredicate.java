@@ -34,10 +34,12 @@ public class LocationPredicate implements JsonSerializable {
         return new LocationPredicate(object);
     }
 
+    @Info("init")
     public static LocationPredicate of(){
         return new LocationPredicate();
     }
 
+    @Info("ResourceLocation id")
     public LocationPredicate biome(ResourceLocation id) {
         this.json.addProperty("biome", id.toString());
         return this;
@@ -53,11 +55,7 @@ public class LocationPredicate implements JsonSerializable {
             this.json.add("block", object);
         }
         else if(blockPredicate instanceof List<?> list && !list.isEmpty() && list.get(0) instanceof String){
-            JsonObject object = new JsonObject();
-            JsonArray array = new JsonArray();
-            list.forEach(s -> array.add(new JsonPrimitive((String) s)));
-            object.add("blocks", array);
-            this.json.add("block", object);
+            this.json.add("block", BlockPredicate.of(String.valueOf(list)).toJsonJS());
         }
         else if (blockPredicate instanceof BlockPredicate predicate){
             this.json.add("block", predicate.json);
@@ -71,7 +69,7 @@ public class LocationPredicate implements JsonSerializable {
         return this;
     }
 
-
+    @Info("ResourceLocation id")
     public LocationPredicate dimension(ResourceLocation id){
         this.json.addProperty("dimension", id.toString());
         return this;
@@ -99,9 +97,8 @@ public class LocationPredicate implements JsonSerializable {
         return this;
     }
 
-    @Info("int minLight, int maxLight")
-    public LocationPredicate light(int min, int max){
-        IntBounds intBounds = IntBounds.of(min, max);
+    @Info("IntBounds intBounds")
+    public LocationPredicate light(IntBounds intBounds){
         this.json.add("light", intBounds.toJson());
         return this;
     }
@@ -114,11 +111,13 @@ public class LocationPredicate implements JsonSerializable {
         return this;
     }
 
-    public LocationPredicate smokey(boolean s){
-        this.json.addProperty("smokey", s);
+    @Info("boolean smoke")
+    public LocationPredicate smokey(boolean smoke){
+        this.json.addProperty("smokey", smoke);
         return this;
     }
 
+    @Info("ResourceLocation id")
     public LocationPredicate structure(ResourceLocation id){
         this.json.addProperty("structure", id.toString());
         return this;

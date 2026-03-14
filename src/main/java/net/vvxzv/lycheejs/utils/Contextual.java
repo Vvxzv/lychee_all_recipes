@@ -197,22 +197,21 @@ public class Contextual implements JsonSerializable {
         return ctx;
     }
 
-    @Info("int min, int max")
-    public static Contextual time(int min, int max) {
+    @Info("IntBounds intBounds")
+    public static Contextual time(IntBounds intBounds) {
         Contextual ctx = new Contextual("time");
-        IntBounds intBounds = IntBounds.of(min, max);
         ctx.json.add("value", intBounds.toJson());
         return ctx;
     }
 
     @Info("int time")
     public static Contextual time(int t) {
-        return time(t, t);
+        return time(IntBounds.of(t));
     }
 
-    @Info("int minTime, int maxTime, int period")
-    public static Contextual time(int minTime, int maxTime, int period) {
-        Contextual ctx = time(minTime, maxTime);
+    @Info("IntBounds intBounds, int period")
+    public static Contextual time(IntBounds intBounds, int period) {
+        Contextual ctx = time(intBounds);
         ctx.json.addProperty("period", period);
         return ctx;
     }
@@ -224,41 +223,40 @@ public class Contextual implements JsonSerializable {
         return ctx;
     }
 
-    @Info("String command, int minValue, int maxValue")
-    public static Contextual execute(String command, int min, int max) {
+    @Info("String command, IntBounds intBounds")
+    public static Contextual execute(String command, IntBounds intBounds) {
         Contextual ctx = execute(command);
-        IntBounds intBounds = IntBounds.of(min, max);
         ctx.json.add("value", intBounds.toJson());
         return ctx;
     }
 
     @Info("String command, int value")
     public static Contextual execute(String command, int value) {
-        return execute(command, value, value);
+        return execute(command, IntBounds.of(value));
     }
 
     @RemapForJS("fall_distance")
-    public static Contextual fallDistance(double min, double max){
+    @Info("DoubleBounds doubleBounds")
+    public static Contextual fallDistance(DoubleBounds doubleBounds){
         Contextual ctx = new Contextual("fall_distance");
-        DoubleBounds doubleBounds = DoubleBounds.of(min, max);
         ctx.json.add("range", doubleBounds.getJson());
         return ctx;
     }
 
     @RemapForJS("fall_distance")
     public static Contextual fallDistance(double range){
-        return fallDistance(range, range);
+        return fallDistance(DoubleBounds.of(range));
     }
 
     @RemapForJS("entity_health")
     public static Contextual entityHealth(double range){
-        return entityHealth(range, range);
+        return entityHealth(DoubleBounds.of(range));
     }
 
     @RemapForJS("entity_health")
-    public static Contextual entityHealth(double min, double max){
+    @Info("DoubleBounds doubleBounds")
+    public static Contextual entityHealth(DoubleBounds doubleBounds){
         Contextual ctx = new Contextual("entity_health");
-        DoubleBounds doubleBounds = DoubleBounds.of(min, max);
         ctx.json.add("range", doubleBounds.getJson());
         return ctx;
     }
@@ -276,6 +274,7 @@ public class Contextual implements JsonSerializable {
     }
 
     @RemapForJS("check_param")
+    @Info("String key")
     public static Contextual checkParam(String key) {
         Contextual ctx = new Contextual("check_param");
         ctx.json.addProperty("key", key);

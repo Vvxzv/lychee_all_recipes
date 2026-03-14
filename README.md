@@ -4,31 +4,31 @@
 ```JavaScript
 ServerEvents.recipes(event => {
     // 建议配合probejs使用
-    // 添加了4个Bindings: BlockPredicate, Post, Contextual, LocationPredicate 里面集成了官方文档给的大部分方法
+    // 添加了6个Bindings: BlockPredicate, Post, Contextual, LocationPredicate, IntBounds, DoubleBounds 里面集成了官方文档给的大部分方法
 
     // 下列配方均是官方文档中的配方例子
     // 原JSON配方例子 https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#use-item-on-a-block
     event.recipes.lychee.block_interacting(
-        'minecraft:shears', 
+        'minecraft:shears',
         'minecraft:pumpkin',
         Post.prevent_default()
     )
 
     event.recipes.lychee.block_interacting(
-        'minecraft:iron_axe', 
+        'minecraft:iron_axe',
         "minecraft:oak_log"
     )
-    .post([
-        // .withChance(0.5) 等效于 .contextual(Contextual.chance(0.5)) 
-        Post.drop_item('minecraft:diamond').withChance(0.5), 
-        Post.place("minecraft:stripped_oak_log"),
-        Post.damage_item()
-    ])
+        .post([
+            // .withChance(0.5) 等效于 .contextual(Contextual.chance(0.5)) 
+            Post.drop_item('minecraft:diamond').withChance(0.5),
+            Post.place("minecraft:stripped_oak_log"),
+            Post.damage_item()
+        ])
 
 
     // 原JSON配方例子 https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#item-entity-burning
     event.recipes.lychee.item_burning("#minecraft:logs_that_burn")
-    .post(Post.drop_item("minecraft:charcoal"))
+        .post(Post.drop_item("minecraft:charcoal"))
 
 
     // 原JSON配方例子 https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#item-entity-inside-a-block
@@ -58,39 +58,39 @@ ServerEvents.recipes(event => {
         ],
         "golden_apple"
     )
-    .level_cost(1)
-    .material_cost(8)
-    .post(Post.prevent_default())
+        .level_cost(1)
+        .material_cost(8)
+        .post(Post.prevent_default())
 
 
     // 原JSON配方例子 https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#block-crushing
     event.recipes.lychee.block_crushing(["minecraft:sugar_cane", "minecraft:sugar_cane", "minecraft:sugar_cane"])
-    .post(Post.drop_item('3x paper'))
+        .post(Post.drop_item('3x paper'))
 
     event.recipes.lychee.block_crushing([]) //该输入物品是可选项，但是需要输入值，因此填个空数组
-    .landing_block("minecraft:moss_carpet")
-    .contextual(
-        Contextual.location(
-            LocationPredicate.of().block("stone_bricks")
-        ).offsetY(-1) 
-    )
-    // 以下注释的内容和上方等效
-    // .contextual( 
-    //     Contextual.location({
-    //         "block": {
-    //             "blocks": [ "stone_bricks" ]
-    //         }
-    //     }).offsetY(-1) 
-    // )
-    .post([
-        Post.place('*'),
-        Post.place("mossy_stone_bricks").offsetY(-1)
-    ])
+        .landing_block("minecraft:moss_carpet")
+        .contextual(
+            Contextual.location(
+                LocationPredicate.of().block("stone_bricks")
+            ).offsetY(-1)
+        )
+        // 以下注释的内容和上方等效
+        // .contextual( 
+        //     Contextual.location({
+        //         "block": {
+        //             "blocks": [ "stone_bricks" ]
+        //         }
+        //     }).offsetY(-1) 
+        // )
+        .post([
+            Post.place('*'),
+            Post.place("mossy_stone_bricks").offsetY(-1)
+        ])
 
 
     // 原JSON配方例子 https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#lightning-channeling
     event.recipes.lychee.lightning_channeling([])
-    .post(Post.execute("fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"))
+        .post(Post.execute("fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"))
 
 
     // 原JSON配方例子 https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#dripstone-dripping
@@ -106,7 +106,7 @@ ServerEvents.recipes(event => {
 ```JavaScript
 ServerEvents.recipes(event => {
     // Recommend to use it with probejs.
-    // Added four Bindings: BlockPredicate, Post, Contextual, LocationPredicate. It integrates most of the methods provided in the official documentation.
+    // Added six Bindings: BlockPredicate, Post, Contextual, LocationPredicate, IntBounds, DoubleBounds. It integrates most of the methods provided in the official documentation.
 
     // The following recipes are all examples from official documentation
     // Original JSON recipe example: https://lycheetweaker.readthedocs.io/en/docs-1.20/recipe/#use-item-on-a-block

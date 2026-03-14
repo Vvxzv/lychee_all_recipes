@@ -43,27 +43,45 @@ public class Post implements JsonSerializable {
         return new Post();
     }
 
+    @Info("JsonObject json")
     public static Post create(JsonObject json){
         return new Post(json);
     }
 
+    @Info("String key, JsonElement element")
     public Post addProperty(String key, JsonElement element){
         this.json.add(key, element);
         return this;
     }
 
+    @Info("String type")
     public Post setType(String type){
         this.json.addProperty("type", type);
         return this;
     }
 
+    @Info("double chance")
     public Post withChance(double chance){
-        this.contextual(Contextual.chance(chance));
+        if(this.json.has("contextual")){
+            this.contextual(
+                    Contextual.create(this.json.getAsJsonObject("contextual")),
+                    Contextual.chance(chance)
+            );
+        } else {
+            this.contextual(Contextual.chance(chance));
+        }
         return this;
     }
 
     public Post isSneaking(){
-        this.contextual(Contextual.isSneaking());
+        if(this.json.has("contextual")){
+            this.contextual(
+                    Contextual.create(this.json.getAsJsonObject("contextual")),
+                    Contextual.isSneaking()
+            );
+        } else {
+            this.contextual(Contextual.isSneaking());
+        }
         return this;
     }
 
@@ -87,11 +105,7 @@ public class Post implements JsonSerializable {
             post.json.addProperty("block", string);
         }
         else if(blockPredicate instanceof List<?> list && !list.isEmpty() && list.get(0) instanceof String){
-            JsonObject object = new JsonObject();
-            JsonArray array = new JsonArray();
-            list.forEach(s -> array.add(new JsonPrimitive((String) s)));
-            object.add("blocks", array);
-            post.json.add("block", object);
+            post.json.add("block", BlockPredicate.of(String.valueOf(list)).toJsonJS());
         }
         else if (blockPredicate instanceof BlockPredicate predicate){
             post.json.add("block", predicate.json);
@@ -104,6 +118,7 @@ public class Post implements JsonSerializable {
         }
     }
 
+    @Info("Contextual... ctx")
     public Post contextual(Contextual... ctx) {
         if (ctx == null || ctx.length == 0) {
             throw new RecipeExceptionJS("Contextual array cannot be null or empty!");
@@ -113,6 +128,7 @@ public class Post implements JsonSerializable {
         return this;
     }
 
+    @Info("int weight")
     public Post weight(int weight){
         this.json.addProperty("weight", weight);
         return this;
@@ -153,6 +169,7 @@ public class Post implements JsonSerializable {
     }
 
     @RemapForJS("drop_item")
+    @Info("ItemStack item")
     public static Post dropItem(ItemStack item) {
         Post post = new Post("drop_item");
         ResourceLocation itemId = RegistryInfo.ITEM.getId(item.getItem());
@@ -185,7 +202,7 @@ public class Post implements JsonSerializable {
 
     @Info("String command, boolean hide")
     public static Post execute(String command, boolean hide){
-        return execute(command, false, true);
+        return execute(command, hide, true);
     }
 
     @Info("String command")
@@ -201,10 +218,9 @@ public class Post implements JsonSerializable {
         return post;
     }
 
-    @Info("int rollsMin, int rollsMax, Post[] entries, int empty_weight")
-    public static Post random(int rollsMin, int rollsMax, Post[] entries, int empty_weight){
+    @Info("IntBounds intBounds, Post[] entries(need .weight(int value) to add the entry weight, default 1), int empty_weight")
+    public static Post random(IntBounds intBounds, Post[] entries, int empty_weight){
         Post post = new Post("random");
-        IntBounds intBounds = IntBounds.of(rollsMin, rollsMax);
         post.json.add("rolls", intBounds.toJson());
         JsonArray array = new JsonArray();
         for (Post entry: entries){
@@ -215,22 +231,22 @@ public class Post implements JsonSerializable {
         return post;
     }
 
-    @Info("int rollsMin, int rollsMax, Post[] entries")
-    public static Post random(int rollsMin, int rollsMax, Post[] entries){
-        return random(rollsMin, rollsMax, entries, 0);
+    @Info("IntBounds intBounds, Post[] entries(need .weight(int value) to add the entry weight, default 1)")
+    public static Post random(IntBounds intBounds, Post[] entries){
+        return random(intBounds, entries, 0);
     }
 
-    @Info("int rolls, Post[] entries, int empty_weight")
+    @Info("int rolls, Post[] entries(need .weight(int value) to add the entry weight, default 1), int empty_weight")
     public static Post random(int rolls, Post[] entries, int empty_weight){
-        return random(rolls, rolls, entries, empty_weight);
+        return random(IntBounds.of(rolls), entries, empty_weight);
     }
 
-    @Info("int rolls, Post[] entries")
+    @Info("int rolls, Post[] entries(need .weight(int value) to add the entry weight, default 1)")
     public static Post random(int rolls, Post[] entries){
         return random(rolls, entries, 0);
     }
 
-    @Info("Post[] entries")
+    @Info("Post[] entries(need .weight(int value) to add the entry weight, default 1)")
     public static Post random(Post[] entries){
         return random(1, entries);
     }
@@ -285,10 +301,9 @@ public class Post implements JsonSerializable {
         return explode("destroy");
     }
 
-    @Info("double minDamage, double maxDamage, String source")
-    public static Post hurt(double minDamage, double maxDamage, String source){
+    @Info("DoubleBounds doubleBounds, String source")
+    public static Post hurt(DoubleBounds doubleBounds, String source){
         Post post = new Post("hurt");
-        DoubleBounds doubleBounds = DoubleBounds.of(minDamage, maxDamage);
         post.json.add("damage", doubleBounds.getJson());
         post.json.addProperty("source", source);
         return post;
@@ -296,12 +311,12 @@ public class Post implements JsonSerializable {
 
     @Info("double damage, String source")
     public static Post hurt(double damage, String source){
-        return hurt(damage, damage, source);
+        return hurt(DoubleBounds.of(damage), source);
     }
 
-    @Info("double minDamage, double maxDamage")
-    public static Post hurt(double minDamage, double maxDamage){
-        return hurt(minDamage, maxDamage, "generic");
+    @Info("DoubleBounds doubleBounds")
+    public static Post hurt(DoubleBounds doubleBounds){
+        return hurt(doubleBounds, "generic");
     }
 
     @Info("double damage")
