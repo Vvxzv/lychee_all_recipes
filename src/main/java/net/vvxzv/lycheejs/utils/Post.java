@@ -272,8 +272,8 @@ public class Post implements JsonSerializable {
         return post;
     }
 
-    @Info("boolean fire, String block_interaction, float radius, float radius_step")
-    public static Post explode(boolean fire, String block_interaction, float radius, float radius_step){
+    @Info("boolean fire, String block_interaction, Number radius, Number radius_step")
+    public static Post explode(boolean fire, String block_interaction, Number radius, Number radius_step){
         Post post = new Post("explode");
         post.json.addProperty("fire", fire);
         post.json.addProperty("block_interaction", block_interaction);
@@ -325,24 +325,24 @@ public class Post implements JsonSerializable {
     }
 
     @RemapForJS("anvil_damage_chance")
-    @Info("double chance")
-    public static Post anvilDamageChance(double chance){
+    @Info("Number chance")
+    public static Post anvilDamageChance(Number chance){
         Post post = new Post("anvil_damage_chance");
         post.json.addProperty("chance", chance);
         return post;
     }
 
     @RemapForJS("add_item_cooldown")
-    @Info("int seconds")
-    public static Post addItemCooldown(int seconds){
+    @Info("Number seconds")
+    public static Post addItemCooldown(Number seconds){
         Post post = new Post("add_item_cooldown");
         post.json.addProperty("s", seconds);
         return post;
     }
 
     @RemapForJS("move_towards_face")
-    @Info("double factor")
-    public static Post moveTowardsFace(double factor){
+    @Info("Number factor")
+    public static Post moveTowardsFace(Number factor){
         Post post = new Post("move_towards_face");
         post.json.addProperty("factor", factor);
         return post;
@@ -353,8 +353,8 @@ public class Post implements JsonSerializable {
         return moveTowardsFace(1);
     }
 
-    @Info("int seconds")
-    public static Post delay(int seconds){
+    @Info("Number seconds")
+    public static Post delay(Number seconds){
         Post post = new Post("delay");
         post.json.addProperty("s", seconds);
         return post;
